@@ -1,0 +1,85 @@
+<script type="text/javascript" src="./simulation.js"></script>
+<script>
+    function addRow() {
+        var table = document.getElementById('myTable');
+        var columnLength = table.getElementsByTagName('tr')[0].children.length;
+        var units = document.getElementsByClassName('unit-table');
+        var tr = document.createElement('tr');
+        tr.className = 'unit-table';
+        for(var i = 0; i < columnLength; i++){
+            var td = document.createElement('td');
+            var text = document.createElement('input');
+            text.type = 'text';
+            td.appendChild(text);
+            tr.appendChild(td);
+        }
+        table.appendChild(tr);
+    }
+
+    function calculate() {
+        let schools = {};
+        const rows = document.getElementById("myTable").rows;
+        for (let i = 1; i < rows.length; i++) {
+            const name = rows[i].children[0].children[0].value;
+            const wtp = Number(rows[i].children[1].children[0].value);
+            const p = Number(rows[i].children[2].children[0].value);
+            schools[name] = [wtp, p];
+        }
+        console.log(schools);
+        const max_rol = optimize(schools);
+        document.getElementById("submitted-list").innerHTML = max_rol;
+    }    
+
+    window.onload = function() {
+        document.getElementById('add_btn').onclick = addRow;
+        document.getElementById('calculate').onclick = calculate;
+    }
+</script>
+
+<body>
+    <!--<form>-->
+  <center>
+    Lambda: 
+    <input type="range" value="1" min="0" max="4" step=".05" oninput="this.nextElementSibling.value = this.value">
+    <output>1</output>
+
+    <div class="panel panel-default">
+        <!-- Table -->
+        <table id="myTable" class="table">
+        <tr>
+            <th> School </th>
+            <th> WTP </th>
+            <th> Probability </th>
+        </tr>
+
+        <tr class="unit-table">
+            <td>
+            <input type="text">
+            </td>
+            <td>
+            <input type="number">
+            </td>
+            <td>
+            <input type="number">
+            </td>
+        </tr>
+        </table>
+    </div>
+
+    <button id="add_btn">Add new school</button>
+    <button id="calculate">Calculate Preference List</button>
+
+    <p id="submitted-list"></p>
+  </center>
+<!--</form>-->
+</body>
+
+<style>
+    .centered {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -100px;
+    }
+</style>
