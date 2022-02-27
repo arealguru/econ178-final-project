@@ -25,8 +25,8 @@
             const p = Number(rows[i].children[2].children[0].value);
             schools[name] = [wtp, p];
         }
-        console.log(schools);
-        const max_rol = optimize(schools);
+        const lambda = Number(document.getElementById("lambda").value);
+        const max_rol = optimize(schools, lambda);
         document.getElementById("submitted-list").innerHTML = max_rol;
     }    
 
@@ -40,7 +40,7 @@
     <!--<form>-->
   <center>
     Lambda: 
-    <input type="range" value="1" min="0" max="4" step=".05" oninput="this.nextElementSibling.value = this.value">
+    <input id="lambda" type="range" value="1" min="0" max="4" step=".05" oninput="this.nextElementSibling.value = this.value">
     <output>1</output>
 
     <div class="panel panel-default">
