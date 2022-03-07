@@ -43,7 +43,14 @@ function all_rols(schools) {
     return rols;
 }
 
-function unconditional_probability_vec(rol, schools) {
+function perceived_probability(p, gamma) {
+    return Math.pow(p, gamma) / Math.pow( 
+        Math.pow(p, gamma) + Math.pow(1 - p, gamma), 
+        1 / gamma
+    );
+}
+
+function unconditional_probability_vec(rol, schools, gamma) {
     let probability_vec = [];
     for (let i = 0; i < rol.length; i++) {
         pr = schools[rol[i]][1];
@@ -51,7 +58,7 @@ function unconditional_probability_vec(rol, schools) {
         for (let j = 0; j < i; j++) {
             pr *= (1 - schools[rol[j]][1]);
         }
-        probability_vec.push(pr);
+        probability_vec.push(perceived_probability(pr, gamma));
     }
     return probability_vec;
 }
@@ -64,8 +71,8 @@ function information_utility(consump_school, ref_school, schools, lbd) {
     return k * (schools[consump_school][0] - schools[ref_school][0]);
 }
 
-function ebra(rol, schools, lbd) {
-    const probs = unconditional_probability_vec(rol, schools);
+function ebra(rol, schools, lbd, gamma) {
+    const probs = unconditional_probability_vec(rol, schools, gamma);
     let sum = 0;
     for (let consump_ind = 0; consump_ind < rol.length; consump_ind++) {
         for (let ref_ind = 0; ref_ind < rol.length; ref_ind++) {
@@ -77,16 +84,14 @@ function ebra(rol, schools, lbd) {
     return sum;
 }
 
-function optimize(schools, lbd) {
+function optimize(schools, lbd, gamma, alpha) {
     const rols = all_rols(Object.keys(schools));
-    schools["none"] = [0, 1]
-
-    let max = 0;
+    schools["none"] = [-1 * alpha, 1];
+    let max = -1 * alpha;
     let max_rol = ["none"];
     
     for (const rol of rols) {
-        const res_ebra = ebra(rol, schools, lbd);
-        console.log(lbd);
+        const res_ebra = ebra(rol, schools, lbd, gamma);
         if (res_ebra > max) {
             max_rol = rol;
             max = res_ebra;
